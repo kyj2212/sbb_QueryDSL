@@ -1,0 +1,73 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layout/layout_detail}">
+    <div layout:fragment="content" class="container my-3">
+        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1 th:text="${question.subject}"></h1>
+                            <h2 th:text="${question.content}" class="subheading"></h2>
+                            <span class="meta">
+                                        Questioned by
+                                        <p th:href="@{#!}" th:text="${question.author.name}"></p>
+                                        <p th:text="|on ${#strings.substring(question.createDate, 2, 10)}|"></p>
+                                    </span>
+                            <div sec:authorize="isAuthenticated()" th:if="${isAuthor}==true" class="bottombtn_box">
+                                <form id="deleteMember" th:action="@{|/questions/${question.id}|}" method="post">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <button class="btn btn-primary btn-lg enabled" id="delete-btn">질문삭제</button>
+                                </form>
+                            </div>
+                            <div class="d-flex flex-end text-center" sec:authorize="isAuthenticated()"
+                                 th:if="${#authentication.getPrincipal().getUsername() == question.author.username}">
+                                <a class="btn btn-outline-dark mt-auto" th:href="@{|/questions/${question.id}/edit|}">질문수정</a>
+                                <form th:action="@{|/questions/${question.id}|}" method="post">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <button class="btn btn-outline-dark mt-auto mx-2">삭제</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- 답변 리스트 -->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div>
+                            <h2 class="mb-10 border-bottom border-dark section-heading" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h2>
+
+                            <div th:each="a : ${question.answerList}" class="mt-10 d-flex">
+                                <div class="mr-20">
+                                    <h3 th:text="${a.content}" class="text-lg"></h3>
+                                </div>
+                                <p th:text="|by ${a.author.name}|" class="font-italic text-sm-right"></p>
+                                <div class="col-auto d-flex p-2">
+                                    <th:block class="text-center" sec:authorize="isAuthenticated()" th:if="${#authentication.getPrincipal().getUsername() == a.author.username}">
+                                        <a class="btn btn-outline-dark mt-auto" th:href="@{|/answers/${a.id}/edit|}">수정</a>
+                                        <form th:action="@{|/answers/${a.id}|}" method="post">
+                                            <input type="hidden" name="_method" value="delete"/>
+                                            <button class="btn btn-outline-dark btn-sm mt-auto mx-2">삭제</button>
+                                        </form>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                        <form sec:authorize="isAuthenticated()" th:action="@{|/answers/${answer.id}|}" th:object="${answerCreateForm}" method="post">
+                            <input type="hidden" name="_method" value="put"/>
+                            <textarea class="form-control form-control-lg" th:field="*{content}"
+                                      placeholder="답변을 입력해주세요"></textarea>
+                            <button class="btn btn-outline-dark btn-sm mt-auto mx-2">수정</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</html>
+

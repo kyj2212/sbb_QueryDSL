@@ -1,0 +1,396 @@
+package site.yejin.sbb;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+@Controller
+public class MainController {
+
+    private static int num=0;
+
+    private List<Article> articles = new ArrayList<>(
+            Arrays.asList(
+                    new Article("제목1", "내용1"),
+                    new Article("제목2", "내용2"))
+    );
+
+    @RequestMapping("/")
+    public String root() {
+        return "redirect:/question/list";
+    }
+
+
+    @RequestMapping("/sbb")
+    @ResponseBody
+    public String index(){
+        System.out.println("index");
+        return "/sbb main page";
+    }
+    @GetMapping("/page1")
+    @ResponseBody
+    public String showPage1() {
+        return """
+                <form method="POST" action="/page2">
+                    <input type="number" name="age" placeholder="나이" />
+                    <input type="submit" value="page2로 POST 방식으로 이동" />
+                </form>
+                """;
+    }
+
+    @PostMapping("/page2")
+    @ResponseBody
+    public String showPage2Post(@RequestParam(defaultValue = "0") int age) {
+        return """
+                <h1>입력된 나이 : %d</h1>
+                <h1>안녕하세요, POST 방식으로 오셨군요.</h1>
+                """.formatted(age);
+    }
+
+    @PostMapping("/plus")
+    @ResponseBody
+    public String showPlusPost(@RequestParam(defaultValue = "1") int a, int b) {
+        int r=a+b;
+        return """
+                <h1>%d</h2>
+                """.formatted(r);
+    }
+    @PostMapping("/minus")
+    @ResponseBody
+    public String showMinusPost(@RequestParam(defaultValue = "1") int a, int b) {
+        int r=a-b;
+        return """
+                <h1>%d</h2>
+                """.formatted(r);
+    }
+
+
+
+    @GetMapping("/page3")
+    @ResponseBody
+    public String showPage3() {
+        return """
+                <form method="POST" action="/plus">
+                    <input type="number" name="a"  value=1 />
+                    <input type="number" name="b" value=5/>
+                    <input type="submit" value="더하기" />
+                </form>
+                """;
+    }
+    @GetMapping("/page4")
+    @ResponseBody
+    public String showPage4() {
+        return """
+                <form method="POST" action="/minus">
+                    <input type="number" name="a" value=1 />
+                    <input type="number" name="b"  value=5/>
+                    <input type="submit" value="빼기" />
+                </form>
+                """;
+    }
+
+
+    @GetMapping("/increase")
+    @ResponseBody
+    public String showIncrease() {
+
+        return """
+                <h1>%d</h1>
+                """.formatted(++num);
+    }
+    @PostMapping("/increase")
+    @ResponseBody
+    public String showIncrease(@RequestParam int num) {
+        num++;
+        return """
+                <h1>%d</h1>
+                """.formatted(num);
+    }
+
+    @GetMapping("/gugudanfor")
+    @ResponseBody
+    public String showGugudanFor(int dan, int limit) {
+
+        StringBuilder str=new StringBuilder();
+        for (int i = 1; i <=limit ; i++) {
+            int r=dan*i;
+            str.append("""
+                <p>%d * %d = %d</p>
+                """.formatted(dan,i,r));
+
+        }
+        return str.toString();
+    }
+
+    @GetMapping("/gugudan")
+    @ResponseBody
+    public String showGugudanStream(Integer dan, Integer limit) {
+
+        if(dan==null)
+            dan=4;
+        if(limit==null)
+            limit=9;
+
+        Integer finalDan= dan;
+
+        return IntStream.rangeClosed(1,limit)
+                .mapToObj(i-> "%d * %d = %d".formatted(finalDan,i,finalDan*i))
+                .collect(Collectors.joining("<br>\n"));
+
+
+    }
+
+    @GetMapping("/mbti/{name}")
+    @ResponseBody
+    public String showMbti(@PathVariable String name) {
+        return switch (name) {
+            case "홍길순" -> {
+                char j = 'J';
+                yield "INF" + j;
+            }
+            case "임꺽정" -> "ENFP";
+            case "장희성", "홍길동" -> "INFP";
+            default -> "모름";
+        };
+    }
+
+    @GetMapping("/mbtiparam")
+    @ResponseBody
+    public String showMbti_param(String name) {
+
+        switch (name){
+            case "홍길동" :
+                return "<h1>INFP</h1>";
+
+            case "홍길순" :
+                return "<h1>ENFP</h1>";
+
+            case "임꺽정" :
+                return "<h1>INFJ</h1>";
+
+            case "김예진" :
+                return "<h1>ESTJ</h1>";
+
+
+        }
+        return "<h1>없음</h1>";
+    }
+
+/*    @GetMapping("/page1")
+    @ResponseBody
+    public String showPage1(){
+        return """
+                <form method="POST" action "/page2">
+                    <input type ="number" name=age placeholder="나이"/>
+                    <input type ="submit"/>
+                 </form>
+                """;
+    }
+
+    @PostMapping("/page2")
+    @ResponseBody
+    public String showPage2Post(@RequestParam(defaultValue = "0") int age){
+        return """
+                <h1>POST 방식으로 넘어옴</h1>
+                """;
+    }
+    @GetMapping("/page2")
+    @ResponseBody
+    public String showPage2Get(@RequestParam(defaultValue = "0") int age){
+        return """
+                <h1>POST 방식으로 넘어옴</h1>
+                """;
+    }*/
+
+
+    /* 내 소스 */
+    @GetMapping("/saveSessionAge")
+    @ResponseBody
+    public String showSaveSessionAge(Integer age, HttpServletRequest req) {
+        HttpSession session = req.getSession();
+        System.out.println("save session : "+session);
+
+        session.setAttribute("age",age);
+
+        return String.valueOf(age);
+    }
+
+    @GetMapping("getSessionAge")
+    @ResponseBody
+    public String showGetSessionAge(HttpServletRequest req){
+
+        HttpSession session=req.getSession();
+        System.out.println("get session : "+session);
+        int age = (int)session.getAttribute("age");
+        return """
+                <h1>age : %d</h1>
+                """.formatted(age);
+    }
+
+
+    /*강사님 소스*/
+    @GetMapping("/saveSession/{name}/{value}")
+    @ResponseBody
+    public String saveSession(@PathVariable String name, @PathVariable String value, HttpServletRequest req) {
+        HttpSession session = req.getSession();
+
+        session.setAttribute(name, value);
+
+        return "세션변수 %s의 값이 %s(으)로 설정되었습니다.".formatted(name, value);
+    }
+
+    @GetMapping("/getSession/{name}")
+    @ResponseBody
+    public String getSession(@PathVariable String name, HttpSession session) {
+        String value = (String) session.getAttribute(name);
+
+        return "세션변수 %s의 값이 %s 입니다.".formatted(name, value);
+    }
+
+    @GetMapping("/addArticle")
+    @ResponseBody
+    public String addArticle(String title, String body) {
+        Article article = new Article(title, body);
+        articles.add(article);
+        return "%d번 게시물이 생성되었습니다.".formatted(article.getId());
+    }
+
+    @GetMapping("/article/{id}")
+    @ResponseBody
+    public Article getArticle(@PathVariable int id) {
+        Article article = articles
+                .stream()
+                .filter(a -> a.getId() == id) // 1번
+                .findFirst()
+                .get();
+        if(article==null)
+            return null;
+        return article;
+    }
+
+
+    @GetMapping("/modifyArticle/{id}")
+    @ResponseBody
+    public String modifyArticle(@PathVariable int id, String title, String body) {
+        Article article = articles
+                .stream()
+                .filter(a -> a.getId() == id) // 1번
+                .findFirst()
+                .get();
+
+        if(article==null)
+            return "%d번 게시물은 존재하지 않습니다.".formatted(id);
+        article.setTitle(title);
+        article.setBody(body);
+
+        return "%d번 게시물을 수정하였습니다.".formatted(id);
+    }
+    @GetMapping("/deleteArticle/{id}")
+    @ResponseBody
+    public String deleteArticle(@PathVariable int id) {
+        Article article = articles
+                .stream()
+                .filter(a -> a.getId() == id) // 1번
+                .findFirst()
+                .get();
+
+        if(article==null)
+            return "%d번 게시물은 존재하지 않습니다.".formatted(id);
+
+        articles.remove(article);
+        return "%d번 게시물을 삭제하였습니다.".formatted(id);
+    }
+
+
+
+/*
+    private List<Person> people = new ArrayList<>(
+            Arrays.asList(
+                    new Person(27,"예진1"),
+                    new Person(27, "예진2"))
+    );
+
+*/
+    private List<Person> people = new ArrayList<>();
+    @GetMapping("/addPersonModel")
+    @ResponseBody
+    public String addPersonModel(@ModelAttribute("p") Person p) {
+        System.out.println(p);
+        people.add(p);
+        return """
+                %d번 인력이 추가되었습니다. <br>
+                나이 : %d <br>
+                이름 : %s
+                """.formatted(p.getId(),p.getAge(),p.getName());
+    }
+    @GetMapping("/addPerson")
+    @ResponseBody
+    public String addPerson(Person p) {
+        System.out.println(p);
+        people.add(p);
+        return """
+                %d번 인력이 추가되었습니다. <br>
+                나이 : %d <br>
+                이름 : %s
+                """.formatted(p.getId(),p.getAge(),p.getName());
+    }
+    @GetMapping("/addPerson/{id}")
+    @ResponseBody
+    public String addPersonParamId(Person p, @PathVariable int id ) {
+        System.out.println("id : "+id);
+        System.out.println(p);
+        people.add(p);
+        return """
+                %d번 인력이 추가되었습니다. <br>
+                나이 : %d <br>
+                이름 : %s
+                """.formatted(p.getId(),p.getAge(),p.getName());
+    }
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    class Person {
+
+        private int id;
+        private int age;
+        private String name;
+
+    };
+
+}
+
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    class Article {
+        private static int lastId = 0;
+
+        private int id;
+        private String title;
+        private String body;
+
+        public Article(String title, String body){
+            this(++lastId,title,body);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
