@@ -9,7 +9,7 @@ import site.yejin.sbb.member.entity.Member;
 
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> , RepositoryUtil {
+public interface MemberRepository extends JpaRepository<Member, Long> , RepositoryUtil, MemberRepositoryCustom {
     Optional<Member> findByUsername(String username);
     boolean existsByUsername(String username);
     @Transactional

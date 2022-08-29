@@ -73,7 +73,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
                 .requestCache().disable()
                 .securityContext().disable()
-                .sessionManagement().disable()
+  //              .sessionManagement().disable()
         ;
         return http.build();
     }
