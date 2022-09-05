@@ -38,8 +38,6 @@ public class MemberService {
                 throw new SignupEmailDuplicatedException("중복된 이메일 입니다.");
             }
         }
-
-
         return member;
     }
 
