@@ -52,9 +52,19 @@ public class Member {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Member> followers = new HashSet<>();
 
+//    @Builder.Default
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    private Set<Member> followings = new HashSet<>();
+
     @Builder.Default
     @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "member_tbl_followings",                              // 연결테이블 이름
+            joinColumns = @JoinColumn(name = "member_id"),        // 회원과 매핑할 조인 컬럼 정보를 지정
+            inverseJoinColumns = @JoinColumn(name = "following_id") // 팔로잉과 매핑할 조인 컬럼 정보를 지정
+    )
     private Set<Member> followings = new HashSet<>();
+
 
     public void addInterestKeywordContent(String keywordContent) {
         interestKeywords.add(new InterestKeyword(this, keywordContent));

@@ -89,6 +89,7 @@ public class TestInitData {
 
             memberRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6, u7, u8)); // PERSIST
 
+
             u8.follow(u7);
             u8.follow(u6);
             u8.follow(u5);
@@ -100,6 +101,24 @@ public class TestInitData {
             u7.follow(u5);
             u7.follow(u4);
             u7.follow(u3);
+
+/*            Set<Member> members = new HashSet<>();
+            members.add(u7);
+            members.add(u6);
+            members.add(u5);
+            members.add(u4);
+            members.add(u3);
+            members.add(u1);
+
+            Set<Member> members2 = new HashSet<>();
+            members2.add(u6);
+            members2.add(u5);
+            members2.add(u4);
+            members2.add(u3);
+
+            Following f1 = Following.builder().id(u8.getId()).members(members).build();
+            Following f2 = Following.builder().id(u7.getId()).members(members2).build();
+            followingRepository.saveAll(Arrays.asList(f1,f2));*/
 
             memberRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6, u7, u8)); // MERGE
         };

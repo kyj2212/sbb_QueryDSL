@@ -30,6 +30,17 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
     public List<String> getQslInterestKeywordsByFollowingsOf(Member m){
         return jpaQueryFactory.select(interestKeyword.content)
                 .from(member)
+                .innerJoin(interestKeyword)
+                .on(member.followings.any().eq(interestKeyword.member))
+                .where(member.eq(m))
+                .fetch();
+    }
+    @Override
+    public List<String> getQslDistinctInterestKeywordsByFollowingsOf(Member m){
+        return jpaQueryFactory.selectDistinct(interestKeyword.content)
+                .from(member)
+                .innerJoin(interestKeyword)
+                .on(member.followings.any().eq(interestKeyword.member))
                 .where(member.eq(m))
                 .fetch();
     }

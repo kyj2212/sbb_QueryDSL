@@ -1,0 +1,8 @@
+package site.yejin.sbb.member.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import site.yejin.sbb.member.entity.Following;
+import site.yejin.sbb.member.entity.Member;
+
+public interface FollowingRepository  extends JpaRepository<Following, Long> {
+}

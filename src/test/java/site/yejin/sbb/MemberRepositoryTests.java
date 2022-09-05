@@ -11,10 +11,9 @@ import site.yejin.sbb.interestkeyword.InterestKeyword;
 import site.yejin.sbb.interestkeyword.InterestKeywordId;
 import site.yejin.sbb.interestkeyword.InterestKeywordRepository;
 import site.yejin.sbb.member.entity.Member;
-import site.yejin.sbb.member.entity.MemberRole;
 import site.yejin.sbb.member.repository.MemberRepository;
 
-import java.util.Arrays;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -137,13 +136,24 @@ public class MemberRepositoryTests {
     @DisplayName("u8이 팔로우한 사람들의 관심종목 중복없이 조회하기")
     @Rollback(false)
     void test_select_followings_interest(){
+
         Member m1 = memberRepository.getQslMember(8L);
         System.out.println("u8 이 팔로우한 사람들");
+        Set<InterestKeyword> interests = new HashSet<>();
         m1.getFollowings().forEach(f -> System.out.println(f.getName()));
-        m1.getFollowings().forEach(f -> System.out.println(f.getName()+"의 interest : "+f.getInterestKeywords()+" list : "+Arrays.asList(f.getInterestKeywords())));
+        m1.getFollowings().forEach(f -> System.out.println(f.getName() + "의 interest : " + interests.addAll(f.getInterestKeywords())));
 
+        Set<String> answer = new HashSet<>();
+        interests.forEach(interestKeyword -> answer.add(interestKeyword.getContent()));
+        System.out.println("넣은 값 "+answer);
+        List<String> contents = memberRepository.getQslInterestKeywordsByFollowingsOf(m1);
+        System.out.println("중복 포함 조회 : cotents : " + contents);
 
+        List<String> dContents = memberRepository.getQslDistinctInterestKeywordsByFollowingsOf(m1);
+        System.out.println("중복 제외 조회 : dcotents : " + dContents);
+
+        dContents.forEach(c-> assertThat(answer).contains(c));
+        answer.forEach(c -> assertThat(dContents).contains(c));
 
     }
-
 }

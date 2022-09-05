@@ -8,4 +8,6 @@ public interface MemberRepositoryCustom {
     Member getQslMember(Long id);
 
     List<String> getQslInterestKeywordsByFollowingsOf(Member member);
+
+    List<String> getQslDistinctInterestKeywordsByFollowingsOf(Member member);
 }
