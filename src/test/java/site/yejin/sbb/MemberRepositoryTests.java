@@ -161,6 +161,6 @@ public class MemberRepositoryTests {
     public void t_init() {
         List<Member> members = memberRepository.findAll();
         members.forEach(m -> System.out.print(m.getName() + " "));
-        assertThat(members.size()).isEqualTo(2);
+        assertThat(members.size()).isEqualTo(1);
     }
 }
