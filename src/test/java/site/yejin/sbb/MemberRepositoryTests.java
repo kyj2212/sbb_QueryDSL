@@ -54,7 +54,7 @@ public class MemberRepositoryTests {
         System.out.println("sampleMemberId : "+sampleMemberId);
         Member member=memberRepository.findById(sampleMemberId).orElseThrow(()->new RuntimeException("no member"));
         System.out.println("sampleMember username : "+member.getUsername());
-        assertThat(member.getUsername()).isEqualTo("test1");
+        assertThat(member.getUsername()).isEqualTo("user1");
     }
 
     @Test
@@ -155,5 +155,12 @@ public class MemberRepositoryTests {
         dContents.forEach(c-> assertThat(answer).contains(c));
         answer.forEach(c -> assertThat(dContents).contains(c));
 
+    }
+    @Test
+    @DisplayName("테스트 데이터로 초기화가 잘된다.")
+    public void t_init() {
+        List<Member> members = memberRepository.findAll();
+        members.forEach(m -> System.out.print(m.getName() + " "));
+        assertThat(members.size()).isEqualTo(9);
     }
 }

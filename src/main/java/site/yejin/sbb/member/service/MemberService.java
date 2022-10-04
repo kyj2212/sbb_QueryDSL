@@ -12,6 +12,8 @@ import site.yejin.sbb.global.exception.SignupUsernameDuplicatedException;
 import site.yejin.sbb.member.entity.Member;
 import site.yejin.sbb.member.repository.MemberRepository;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -59,5 +61,9 @@ public class MemberService {
         orgMember.updateName(newMember.getName());
         orgMember.updateEmail(newMember.getEmail());
         orgMember.setEncryptedPassword(newMember.getPassword());
+    }
+
+    public List<Member> findAll() {
+        return memberRepository.findAll();
     }
 }
